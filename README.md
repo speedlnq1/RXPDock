@@ -1,3 +1,5 @@
+<p align="center"><img src="logo.png" width="160" alt="RXP Dock logo"></p>
+
 # RXP Dock
 
 **Quests | RestedXP tabs on top of the Questie quest tracker.**
@@ -18,6 +20,8 @@ One panel at a time, in the same spot. Made for WoW Forever.
 1. Download the zip from [Releases](../../releases).
 2. Unzip it into `World of Warcraft\_forever_\Interface\AddOns\` so you get `AddOns\RXPDock\`.
 3. Fully restart the game.
+
+Also on [CurseForge](https://www.curseforge.com/wow/addons/rxp-dock) (after moderator approval).
 
 Needs **Questie** (with its tracker on) and **RestedXP Guides**.
 
