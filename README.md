@@ -21,7 +21,7 @@ One panel at a time, in the same spot. Made for WoW Forever.
 2. Unzip it into `World of Warcraft\_forever_\Interface\AddOns\` so you get `AddOns\RXPDock\`.
 3. Fully restart the game.
 
-Also on [CurseForge](https://www.curseforge.com/wow/addons/rxp-dock) (after moderator approval).
+Also on [CurseForge](https://www.curseforge.com/wow/addons/rxp-dock).
 
 Needs **Questie** (with its tracker on) and **RestedXP Guides**.
 
