@@ -2,6 +2,7 @@
 -- RestedXP is never hidden: hiding RXPFrame pauses the guide (its OnHide sets isHidden).
 -- On the Quests tab it is only made invisible and click-through, so it keeps tracking steps.
 local tabs, buttons, hidQuestie, tick, dragging
+local active, hidPS, psHooked = "quests", false, false -- active: the tab really shown this tick
 
 -- muted[f] = the mouse state RXP wants back for f (click, motion, wheel)
 local muted, hooked, quiet = {}, {}, false
@@ -139,8 +140,7 @@ end
 local function makeTabs(q)
 	tabs = CreateFrame("Frame", "RXPDockTabs", UIParent)
 	tabs:SetHeight(20)
-	tabs:SetPoint("BOTTOMLEFT", q, "TOPLEFT", 0, 0) -- follows Questie when you move it
-	tabs:SetPoint("BOTTOMRIGHT", q, "TOPRIGHT", 0, 0)
+	tabs:SetPoint("BOTTOMRIGHT", q, "TOPRIGHT", 0, 0) -- follows Questie when you move it; width set by fitTabs
 	local div = tabs:CreateTexture(nil, "ARTWORK")
 	div:SetColorTexture(1, 1, 1, 0.12)
 	div:SetPoint("BOTTOMLEFT")
@@ -148,11 +148,12 @@ local function makeTabs(q)
 	div:SetHeight(1)
 	buttons = {}
 	local a = makeTab("quests", QUESTS_LABEL or "Quests", 0)
-	makeTab("rxp", "RestedXP", a:GetWidth())
+	local b = makeTab("rxp", "RestedXP", a:GetWidth())
+	makeTab("polestar", "Polestar", a:GetWidth() + b:GetWidth())
 	paint()
 	-- Questie re-shows its tracker on every update; hide it again in the same frame (no flicker).
 	hooksecurefunc(q, "Show", function(self)
-		if db().tab == "rxp" and not InCombatLockdown() and not dragging then self:Hide() end
+		if active ~= "quests" and not InCombatLockdown() and not dragging then self:Hide() end
 	end)
 	-- Ctrl + drag the tab bar moves the Questie tracker (and so everything), using Questie's own drag code,
 	-- which also saves the new spot. Handy when the tracker itself sits under the minimap.
@@ -179,6 +180,14 @@ local function makeTabs(q)
 	end
 end
 
+-- Tab bar = width of the window it sits on, right-aligned to Questie. On the RestedXP tab the bar (and
+-- so RXP) is no wider than RXP, so the hidden, wider Questie tracker can't hold RXP away from the screen edge.
+local function fitTabs(q, win)
+	local f = active ~= "quests" and win or q
+	local w = f:GetWidth() * f:GetEffectiveScale() / tabs:GetEffectiveScale()
+	if w > 0 and math.abs(tabs:GetWidth() - w) > 0.5 then tabs:SetWidth(w) end
+end
+
 -- RXP visible and clickable, or invisible and click-through (but still running).
 local function showRXP(on, r, win)
 	if on then
@@ -190,15 +199,41 @@ local function showRXP(on, r, win)
 	end
 end
 
+-- Polestar's guide window. Hiding it is safe: its own close button does the same and the guide keeps running.
+local function hidePS(p)
+	if p:IsShown() and not (p:IsProtected() and InCombatLockdown()) then p:Hide(); hidPS = true end
+end
+
 function tick()
 	local q, r = _G.Questie_BaseFrame, _G.RXPFrame
 	if not (q and r) then return end -- no Questie tracker: leave RXP alone
 	if not tabs then makeTabs(q) end
 	if dragging then return end
 	local win, parts = rxpParts(r)
+	local p = _G.PolestarGuideFrame
+	if p and not psHooked then
+		psHooked = true
+		-- Polestar re-shows its window by itself: put it away again unless its tab is open.
+		p:HookScript("OnShow", function(self) if active ~= "polestar" and not dragging then hidePS(self) end end)
+	end
 	local safe = not InCombatLockdown() -- Questie's tracker holds secure quest-item buttons
+	-- the tab really shown: a closed RXP or Polestar falls back to Quests
+	active = db().tab
+	if active == "rxp" and not win:IsShown() then active = "quests" end
+	if active == "polestar" and not (p and (p:IsShown() or hidPS)) then active = "quests" end
+	if p and active ~= "polestar" then hidePS(p) end
+	fitTabs(q, active == "polestar" and p or win)
 	placeRXP(win, parts)
-	if db().tab == "rxp" and win:IsShown() then -- RestedXP tab (if RXP is closed, fall back to Quests)
+	if active == "polestar" then
+		if hidPS and not (p:IsProtected() and InCombatLockdown()) then hidPS = false; p:Show() end
+		placeRXP(p, {})
+		if q:IsShown() then
+			if not safe then return end
+			q:Hide()
+		end
+		hidQuestie = true
+		showRXP(false, r, win) -- invisible but still tracking steps
+	elseif active == "rxp" then -- RestedXP tab
 		if q:IsShown() then
 			if not safe then return end -- can't hide Questie in combat: keep the old view until it ends
 			q:Hide()
@@ -222,6 +257,7 @@ C_Timer.NewTicker(0.2, tick)
 
 SLASH_RXPDOCK1 = "/rxpdock"
 SlashCmdList.RXPDOCK = function()
-	db().tab = db().tab == "rxp" and "quests" or "rxp"
+	local nextTab = { quests = "rxp", rxp = "polestar", polestar = "quests" }
+	db().tab = nextTab[db().tab] or "quests"
 	if buttons then paint(); tick() end
 end

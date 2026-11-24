@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## Title: RXP Dock
-## Notes: Quests | RestedXP tabs on the Questie tracker. Unofficial, not made by RestedXP or Questie.
-## OptionalDeps: Questie, RXPGuides
+## Notes: Quests | RestedXP | Polestar tabs on the Questie tracker. Unofficial, not made by RestedXP, Questie or Polestar.
+## OptionalDeps: Questie, RXPGuides, Polestar
 ## SavedVariablesPerCharacter: RXPDockDB
-## Version: 1.0.0
+## Version: 1.1.0
 ## X-Website: https://github.com/speedlnq1/RXPDock
 RXPDock.lua

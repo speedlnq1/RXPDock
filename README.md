@@ -2,13 +2,14 @@
 
 # RXP Dock
 
-**Quests | RestedXP tabs on top of the Questie quest tracker.**
+**Quests | RestedXP | Polestar tabs on top of the Questie quest tracker.**
 One panel at a time, in the same spot. Made for WoW Forever.
 
-> Unofficial. Not made by or affiliated with RestedXP or Questie.
+> Unofficial. Not made by or affiliated with RestedXP, Questie or Polestar.
 
 ## Features
-- Two tabs above the Questie tracker: **Quests** and **RestedXP**.
+- Three tabs above the Questie tracker: **Quests**, **RestedXP** and **Polestar**.
+- **Polestar tab (new in 1.1.0):** the Polestar guide window docks in the same spot. Polestar is optional: no Polestar, the tab just shows your quests.
 - The RestedXP guide sits right under the tabs, where your quest list is.
 - **RestedXP never pauses.** On the Quests tab the guide is only made invisible and click-through, so steps keep tracking and quests keep auto accepting and turning in.
 - Never an empty slot: if Questie has nothing to show (no quests, in a dungeon), RestedXP shows instead. If RestedXP is closed, Questie shows.
@@ -26,8 +27,8 @@ Also on [CurseForge](https://www.curseforge.com/wow/addons/rxp-dock).
 Needs **Questie** (with its tracker on) and **RestedXP Guides**.
 
 ## Use
-- Click **Quests** or **RestedXP**.
-- `/rxpdock` switches tabs.
+- Click **Quests**, **RestedXP** or **Polestar**.
+- `/rxpdock` switches to the next tab.
 - **Ctrl + drag the tab bar** to move everything (tabs, tracker and guide). Questie saves the spot.
 
 ## Good to know
